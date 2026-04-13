@@ -1,0 +1,20 @@
+[project]
+name = "hw4"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aiohttp>=3.13.5",
+    "geopandas>=1.1.3",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.8",
+    "minicamels",
+    "numpy>=2.4.4",
+    "pandas>=3.0.2",
+    "requests>=2.33.1",
+    "torch>=2.11.0",
+]
+
+[tool.uv.sources]
+minicamels = { git = "https://github.com/BennettHydroLab/minicamels.git" }
