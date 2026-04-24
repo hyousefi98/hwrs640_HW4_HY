@@ -1,12 +1,51 @@
-"""Build the report notebook programmatically."""
+"""Build the report notebook programmatically.
+
+Every figure is embedded as a base64 data URI so the notebook and its PDF
+export are fully self-contained (no relative paths).
+"""
+import base64
+import re
+from pathlib import Path
+
 import nbformat as nbf
+
+HERE = Path(__file__).resolve().parent
+REPO = HERE.parent
+
+
+def _embed_img(path: str) -> str:
+    p = (HERE / path).resolve() if not Path(path).is_absolute() else Path(path)
+    if not p.exists():
+        raise FileNotFoundError(f"figure not found: {p}")
+    mime = {"png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg"}.get(
+        p.suffix.lower().lstrip("."), "image/png"
+    )
+    b64 = base64.b64encode(p.read_bytes()).decode("ascii")
+    return f"data:{mime};base64,{b64}"
+
+
+_MD_IMG_RE = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
+
+
+def _embed_all_images(md_text: str) -> str:
+    """Rewrite `![alt](path)` markdown image refs to embed base64 data URIs."""
+
+    def repl(m: re.Match) -> str:
+        alt, src = m.group(1), m.group(2)
+        if src.startswith(("data:", "http://", "https://")):
+            return m.group(0)
+        data_uri = _embed_img(src)
+        return f"![{alt}]({data_uri})"
+
+    return _MD_IMG_RE.sub(repl, md_text)
+
 
 nb = nbf.v4.new_notebook()
 cells = []
 
 
 def md(text: str):
-    cells.append(nbf.v4.new_markdown_cell(text))
+    cells.append(nbf.v4.new_markdown_cell(_embed_all_images(text)))
 
 
 md(r"""# HWRS640 — Assignment 4
@@ -276,7 +315,7 @@ uv run camelflow plot --checkpoint outputs/best.pt
 
 nb["cells"] = cells
 
-with open("report.ipynb", "w") as f:
+with open(HERE / "report.ipynb", "w") as f:
     nbf.write(nb, f)
 
-print("report.ipynb written")
+print(f"report.ipynb written ({(HERE / 'report.ipynb').stat().st_size // 1024} KB)")
