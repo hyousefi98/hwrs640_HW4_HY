@@ -301,16 +301,6 @@ uv run camelflow train --epochs 50 --seq-len 365 --batch-size 256 \
                        --loss nse --lr 1e-3 --seed 42
 uv run camelflow plot --checkpoint outputs/best.pt
 ```
-
----
-
-## References
-
-- Kratzert, F. et al. (2018). Rainfall–runoff modelling using LSTM networks. *HESS* 22, 6005–6022.
-- Kratzert, F. et al. (2019). Towards learning universal, regional, and local hydrological behaviors via ML applied to large-sample datasets. *HESS* 23, 5089–5110.
-- Newman, A. J. et al. (2015). Development of a large-sample watershed-scale hydrometeorological data set for the contiguous USA. *HESS* 19, 209–223.
-- Addor, N. et al. (2017). The CAMELS data set. *HESS* 21, 5293–5313.
-- `minicamels` — <https://github.com/BennettHydroLab/minicamels>
 """)
 
 nb["cells"] = cells
