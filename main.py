@@ -1,6 +1,4 @@
-def main():
-    print("Hello from hw4!")
-
+from camelflow.cli import main
 
 if __name__ == "__main__":
     main()
